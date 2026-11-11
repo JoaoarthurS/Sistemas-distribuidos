@@ -1,0 +1,24 @@
+# dependências e ambientes
+client/node_modules/
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# chaves e certificados de teste: gere com  python certs/gen_certs.py
+certs/*.key
+certs/*.crt
+certs/*.srl
+
+# capturas, logs e chaves de sessão TLS (SSLKEYLOGFILE) locais
+*.pcapng
+*.pcap
+*.log
+sslkeys*.txt
+
+# editores e sistema operacional
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini
+.DS_Store
