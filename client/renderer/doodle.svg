@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="0 0 300 300" fill="none" stroke="#000" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+  <!-- balão de conversa -->
+  <path d="M18 22h34a7 7 0 0 1 7 7v16a7 7 0 0 1-7 7H34l-9 8v-8h-7a7 7 0 0 1-7-7V29a7 7 0 0 1 7-7z"/>
+  <path d="M24 34h22M24 41h14"/>
+  <!-- cadeado -->
+  <rect x="96" y="30" width="24" height="20" rx="4"/>
+  <path d="M101 30v-6a7 7 0 0 1 14 0v6"/>
+  <circle cx="108" cy="40" r="2.2"/>
+  <!-- wi-fi -->
+  <path d="M160 40a24 24 0 0 1 34 0M166 47a15 15 0 0 1 22 0M172 54a6 6 0 0 1 10 0"/>
+  <!-- nuvem -->
+  <path d="M228 52h40a11 11 0 0 0 0-22 15 15 0 0 0-29-4 10 10 0 0 0-11 26z"/>
+  <!-- código -->
+  <path d="M30 104l-12 11 12 11M58 104l12 11-12 11M49 98l-10 34"/>
+  <!-- engrenagem -->
+  <circle cx="114" cy="116" r="7"/>
+  <path d="M114 99v6M114 127v6M97 116h6M125 116h6M102 104l4 4M122 124l4 4M102 128l4-4M122 108l4-4"/>
+  <!-- avião de papel -->
+  <path d="M158 122l46-20-14 44-10-15-22-9zM180 131l24-29"/>
+  <!-- estrela -->
+  <path d="M250 98l5 11 12 1-9 8 3 12-11-6-11 6 3-12-9-8 12-1z"/>
+  <!-- coração -->
+  <path d="M40 196c-8-8-20-2-17 8 3 8 17 16 17 16s14-8 17-16c3-10-9-16-17-8z"/>
+  <!-- servidor -->
+  <rect x="94" y="176" width="40" height="14" rx="3"/>
+  <rect x="94" y="194" width="40" height="14" rx="3"/>
+  <path d="M101 183h2M101 201h2M114 183h12M114 201h12"/>
+  <!-- robô -->
+  <rect x="166" y="182" width="32" height="26" rx="7"/>
+  <path d="M182 182v-8M176 208v5M188 208v5"/>
+  <circle cx="182" cy="172" r="2.5"/>
+  <circle cx="175" cy="194" r="2.5"/>
+  <circle cx="189" cy="194" r="2.5"/>
+  <!-- raio -->
+  <path d="M252 168l-14 22h11l-5 18 16-24h-11l5-16z"/>
+  <!-- envelope -->
+  <rect x="18" y="254" width="38" height="26" rx="4"/>
+  <path d="M19 256l18 13 18-13"/>
+  <!-- nota musical -->
+  <path d="M104 282v-26l20-5v24"/>
+  <circle cx="99" cy="282" r="5"/>
+  <circle cx="119" cy="276" r="5"/>
+  <!-- sorriso -->
+  <circle cx="182" cy="266" r="15"/>
+  <path d="M175 270a9 9 0 0 0 14 0"/>
+  <path d="M176 261h.01M188 261h.01"/>
+  <!-- chave -->
+  <circle cx="240" cy="262" r="8"/>
+  <path d="M248 262h24M264 262v8M270 262v6"/>
+  <!-- detalhes -->
+  <circle cx="78" cy="70" r="2"/>
+  <circle cx="214" cy="84" r="2"/>
+  <circle cx="140" cy="158" r="2"/>
+  <circle cx="70" cy="236" r="2"/>
+  <circle cx="284" cy="226" r="2"/>
+  <path d="M138 70v8M134 74h8M74 156v8M70 160h8M222 236v8M218 240h8M286 132v8M282 136h8"/>
+</svg>
