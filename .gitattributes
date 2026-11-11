@@ -1,0 +1,9 @@
+# Finais de linha normalizados (LF no repositório); scripts do Windows com CRLF.
+* text=auto eol=lf
+*.bat text eol=crlf
+
+# binários
+*.png binary
+*.jpg binary
+*.pdf binary
+*.pcapng binary

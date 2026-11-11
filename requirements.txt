@@ -1,0 +1,4 @@
+# Servidor e bot usam apenas a biblioteca padrão do Python (socket, ssl,
+# threading, http.server, urllib). A única dependência externa é usada
+# somente para gerar os certificados de teste (certs/gen_certs.py):
+cryptography>=42

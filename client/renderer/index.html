@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SD Chat</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- ======================= LOGIN ======================= -->
+  <section id="login" class="login">
+    <div class="login-band"></div>
+    <div class="login-brand"><span data-icon="chat"></span> SD CHAT</div>
+    <div class="login-card">
+      <div class="login-hero">
+        <div class="login-logo"><span data-icon="forum"></span></div>
+        <h1>Entrar no chat</h1>
+        <p>Converse com a turma e tire dúvidas com o assistente de IA.</p>
+      </div>
+      <form id="login-form" autocomplete="off" novalidate>
+        <label class="field">
+          <span>Seu nome</span>
+          <input id="f-name" maxlength="20" placeholder="ex.: Ana" spellcheck="false">
+        </label>
+        <div class="field-row">
+          <label class="field grow">
+            <span>Servidor</span>
+            <input id="f-host" spellcheck="false">
+          </label>
+          <label class="field port">
+            <span>Porta</span>
+            <input id="f-port" type="number" min="1" max="65535">
+          </label>
+        </div>
+        <label class="secure-toggle" for="f-secure">
+          <span class="secure-icon" id="secure-icon"></span>
+          <span class="secure-text">
+            <strong id="secure-title">Conexão segura (TLS)</strong>
+            <small id="secure-hint">Mensagens cifradas entre você e o servidor</small>
+          </span>
+          <input type="checkbox" id="f-secure" class="switch">
+        </label>
+        <div class="ca-row" id="ca-row">
+          <span data-icon="verified"></span>
+          <span class="ca-text">CA confiável: <b id="f-ca"></b></span>
+          <button type="button" class="link-btn" id="btn-ca">Alterar</button>
+        </div>
+        <div class="login-error" id="login-error" hidden></div>
+        <button class="btn-primary" id="btn-login" type="submit">
+          <span class="btn-label">Entrar</span><span class="spinner" hidden></span>
+        </button>
+      </form>
+    </div>
+    <p class="login-foot">Sistemas Distribuídos II · Sockets TCP, threads, TLS e LLM</p>
+  </section>
+
+  <!-- ======================= APLICATIVO ======================= -->
+  <div id="app" class="app" hidden>
+    <aside class="sidebar">
+      <header class="side-header">
+        <div class="avatar" id="me-avatar"></div>
+        <div class="me-info">
+          <div class="me-name" id="me-name"></div>
+          <div class="conn-badge" id="me-conn"></div>
+        </div>
+        <button class="icon-btn" id="btn-theme" title="Alternar tema"><span data-icon="moon"></span></button>
+        <button class="icon-btn" id="btn-info" title="Conexão e protocolo"><span data-icon="info"></span></button>
+        <button class="icon-btn" id="btn-logout" title="Sair"><span data-icon="logout"></span></button>
+      </header>
+      <div class="search-box">
+        <span data-icon="search"></span>
+        <input id="search" placeholder="Pesquisar ou começar uma nova conversa" spellcheck="false">
+      </div>
+      <div class="filter-chips" id="filters">
+        <button class="chip active" data-filter="all">Tudo</button>
+        <button class="chip" data-filter="unread">Não lidas</button>
+        <button class="chip" data-filter="online">Online</button>
+      </div>
+      <ul class="chat-list" id="chat-list"></ul>
+    </aside>
+
+    <main class="main">
+      <div class="empty" id="empty">
+        <div class="empty-art"><span data-icon="forum"></span></div>
+        <h2>SD Chat para Desktop</h2>
+        <p>Envie mensagens para a <b>Sala Geral</b>, converse em particular com quem está online
+           ou pergunte ao assistente com <b>@bot</b>.</p>
+        <div class="empty-foot" id="empty-foot"></div>
+      </div>
+
+      <section class="chat" id="chat" hidden>
+        <header class="chat-header">
+          <div class="avatar" id="chat-avatar"></div>
+          <div class="chat-title">
+            <div class="chat-name" id="chat-name"></div>
+            <div class="chat-status" id="chat-status"></div>
+          </div>
+          <button class="icon-btn" id="btn-reset" title="Apagar meu histórico com o bot" hidden><span data-icon="broom"></span></button>
+          <button class="icon-btn" id="btn-chat-info" title="Conexão e protocolo"><span data-icon="info"></span></button>
+        </header>
+        <div class="banner" id="banner" hidden></div>
+        <div class="messages" id="messages"></div>
+        <button class="scroll-down" id="scroll-down" hidden><span data-icon="down"></span><span class="sd-badge" id="sd-badge" hidden></span></button>
+        <div class="suggestions" id="suggestions" hidden></div>
+        <footer class="composer" id="composer">
+          <div class="emoji-panel" id="emoji-panel" hidden></div>
+          <div class="mention-pop" id="mention-pop" hidden></div>
+          <button class="icon-btn" id="btn-emoji" title="Emojis"><span data-icon="mood"></span></button>
+          <div class="input-wrap">
+            <textarea id="input" rows="1" placeholder="Digite uma mensagem"></textarea>
+            <span class="char-count" id="char-count" hidden></span>
+          </div>
+          <button class="send-btn" id="btn-send" title="Enviar (Enter)"><span data-icon="send"></span></button>
+        </footer>
+      </section>
+    </main>
+
+    <aside class="drawer" id="drawer" aria-hidden="true">
+      <header class="drawer-header">
+        <button class="icon-btn" id="btn-drawer-close" title="Fechar"><span data-icon="close"></span></button>
+        <h3>Conexão e protocolo</h3>
+      </header>
+      <div class="drawer-body" id="drawer-body"></div>
+    </aside>
+  </div>
+
+  <div class="toasts" id="toasts"></div>
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

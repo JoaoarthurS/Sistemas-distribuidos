@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SD Chat · Servidor</title>
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 24 24"><path d="M20 13H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1v-6c0-.55-.45-1-1-1zM7 19c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zM20 3H4c-.55 0-1 .45-1 1v6c0 .55.45 1 1 1h16c.55 0 1-.45 1-1V4c0-.55-.45-1-1-1zM7 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg></div>
+      <div>
+        <h1>SD Chat <span>· Painel do Servidor</span></h1>
+        <div class="sub" id="sub">conectando ao servidor…</div>
+      </div>
+    </div>
+    <div class="top-chips" id="top-chips"></div>
+    <div class="status" id="status"><span class="dot"></span><span id="status-text">conectando</span></div>
+    <button class="icon-btn" id="theme" title="Alternar tema">◐</button>
+  </header>
+
+  <section class="stats" id="stats"></section>
+
+  <main class="grid">
+    <section class="panel participants">
+      <header class="panel-head">
+        <h2>Participantes</h2><span class="count" id="count-clients">0</span>
+        <div class="legend"><span class="lk on">🔒 TLS</span><span class="lk off">⚠ TCP puro</span></div>
+      </header>
+      <div class="panel-body" id="clients"></div>
+    </section>
+
+    <section class="panel messages">
+      <header class="panel-head">
+        <h2>Mensagens</h2><span class="count" id="count-msgs">0</span>
+        <div class="tabs" id="msg-tabs">
+          <button class="tab active" data-f="all">Todas</button>
+          <button class="tab" data-f="public">Públicas</button>
+          <button class="tab" data-f="private">Privadas</button>
+          <button class="tab" data-f="bot">Bot</button>
+        </div>
+        <input class="search" id="msg-search" placeholder="Filtrar…">
+      </header>
+      <div class="panel-body feed" id="messages"></div>
+      <form class="broadcast" id="broadcast">
+        <input id="broadcast-text" maxlength="500" placeholder="Enviar aviso do servidor para todos os participantes…">
+        <button type="submit">Enviar aviso</button>
+      </form>
+    </section>
+
+    <section class="side">
+      <section class="panel requests">
+        <header class="panel-head"><h2>Solicitações ao bot</h2><span class="count" id="count-pending">0</span>
+          <span class="hint" id="timeout-hint"></span></header>
+        <div class="panel-body" id="pending"></div>
+      </section>
+      <section class="panel events">
+        <header class="panel-head"><h2>Eventos</h2><span class="count" id="count-events">0</span>
+          <label class="autoscroll"><input type="checkbox" id="ev-pause"> pausar</label></header>
+        <div class="panel-body feed" id="events"></div>
+      </section>
+      <section class="panel threads">
+        <header class="panel-head"><h2>Threads ativas</h2><span class="count" id="count-threads">0</span></header>
+        <div class="panel-body" id="threads"></div>
+      </section>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" hidden></div>
+  <script type="module" src="/js/main.js"></script>
+</body>
+</html>
