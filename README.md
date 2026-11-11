@@ -11,10 +11,11 @@ com LLM local** (Qwen 3.5 4B quantizado, via Ollama).
 | Servidor + interface gráfica (painel web ao vivo) | Python 3 (`socket`, `ssl`, `threading`) + HTML/CSS/JS | [`server/`](server/) |
 | Cliente humano (interface estilo WhatsApp) | Electron + JavaScript (`net`/`tls` do Node.js) | [`client/`](client/) |
 | Cliente bot | Python 3 + Ollama (`qwen3.5:4b`, Q4_K_M) | [`bot/`](bot/) |
-| Protocolo e socket seguro para threads (compartilhados) | Python | [`common/`](common/) |
+| Protocolo, socket seguro para threads e TLS (compartilhados) | Python | [`common/`](common/) |
 
 Documentação: [Protocolo](docs/PROTOCOLO.md) · [Relatório (base)](docs/RELATORIO.md) ·
-[Roteiro do Wireshark](docs/WIRESHARK.md)
+[Roteiro do Wireshark](docs/WIRESHARK.md) · [Como contribuir (Git Flow)](CONTRIBUTING.md) ·
+[Histórico de versões](CHANGELOG.md)
 
 ---
 
@@ -44,14 +45,14 @@ Clique duas vezes em **`demo.bat`**. Ele abre o servidor (e o painel no
 navegador), o bot e três clientes: **Ana** e **Bruno** com TLS e **Carla** sem
 criptografia (referência para o Wireshark).
 
-### Manualmente (qualquer sistema)
+### Manualmente (qualquer sistema, a partir da raiz do projeto)
 
 ```bash
 # terminal 1 — servidor (abre o painel em http://127.0.0.1:8080)
-python server/server.py
+python -m server
 
 # terminal 2 — bot (Ollama precisa estar rodando)
-python bot/bot.py
+python -m bot
 
 # terminais 3, 4, 5 — clientes humanos
 cd client
@@ -64,7 +65,7 @@ Sem argumentos, o cliente abre a tela de login (nome, servidor, porta e chave TL
 
 ### Opções
 
-**Servidor** (`python server/server.py --help`)
+**Servidor** (`python -m server --help`)
 
 | Opção | Padrão | Descrição |
 |---|---|---|
@@ -76,7 +77,7 @@ Sem argumentos, o cliente abre a tela de login (nome, servidor, porta e chave TL
 | `--bot-token` | `dev-bot-token` | token exigido do bot (ou variável `CHAT_BOT_TOKEN`) |
 | `--no-browser` | — | não abre o painel automaticamente |
 
-**Bot** (`python bot/bot.py --help`)
+**Bot** (`python -m bot --help`)
 
 | Opção | Padrão | Descrição |
 |---|---|---|
@@ -120,33 +121,73 @@ Comandos no terminal do bot: `status`, `timeout <seg>`, `modelo <nome>`,
 ## 6. Testes
 
 ```bash
-python tests/test_integration.py
+python -m unittest discover -s tests/unit          # 24 testes unitários (Python, sem rede)
+python tests/integration/test_integration.py        # 51 verificações do sistema completo
+cd client && npm test                               # 10 testes do cliente (node --test)
 ```
 
-Sobe servidor e bot reais com um Ollama **simulado** e executa 51 verificações
-(conexões, TLS, roteamento, delimitação, bot, histórico, timeouts,
-desconexões e painel). Resultado esperado: `51/51 verificações passaram.`
+Os testes unitários exercitam roteamento, correlação por `req_id`, histórico e
+comandos do bot com dependências falsas, sem abrir sockets. O de integração
+sobe servidor e bot reais com um Ollama **simulado** e verifica conexões, TLS,
+roteamento, delimitação, bot, histórico, timeouts, desconexões e painel.
+Resultado esperado: `51/51 verificações passaram.`
 
-## 7. Estrutura
+## 7. Arquitetura
+
+O código segue os princípios **SOLID** (detalhes na seção 1.1 do
+[relatório](docs/RELATORIO.md)): uma responsabilidade por módulo, tabelas de
+tratadores por tipo de quadro (novos tipos não alteram o código existente) e
+dependência de interfaces pequenas (`ConnectionHandler`, `AdminService`,
+`ChatModel`). As classes concretas só são criadas nas raízes de composição
+(`server/cli.py`, `bot/cli.py`, `client/main.js`).
 
 ```
-server/server.py          servidor TCP/TLS com threads + API do painel
-server/dashboard/         interface gráfica do servidor (HTML/CSS/JS, SSE)
-bot/bot.py                cliente bot (socket TLS + pool de threads + Ollama)
-client/main.js            cliente: socket net/tls, delimitação, heartbeat
-client/renderer/          interface estilo WhatsApp
-common/protocol.py        protocolo: tipos, codificação e leitura de quadros
-common/transport.py       SafeSocket: TLS seguro com várias threads
+common/
+  protocol.py             tipos, códigos de erro, codificação e leitura de quadros (NDJSON)
+  transport.py            SafeSocket: TLS seguro com várias threads
+  tls.py                  contextos TLS de servidor e cliente (política única)
+server/                   python -m server
+  cli.py                  linha de comando (raiz de composição)
+  chat_server.py          ChatServer: compõe as peças e controla o ciclo de vida
+  connection.py           ClientConnection: thread leitora + escritora por socket
+  registry.py             participantes conectados (thread-safe)
+  sessions.py             HELLO → WELCOME, entrada e saída
+  router.py               despacho de quadros por tipo
+  bot_broker.py           solicitações ao bot, correlação por req_id e tempo limite
+  listener.py             socket de escuta + thread de aceitação
+  validation.py           regras de nome, HELLO e menções
+  monitor.py              estatísticas e feed de eventos (Observer)
+  dashboard/              interface gráfica: HTTP + SSE e páginas em static/
+bot/                      python -m bot
+  cli.py                  linha de comando (raiz de composição)
+  app.py                  ChatBot: sessão, reconexão, despacho e pool de threads
+  assistant.py            regra de negócio: comandos, histórico e LLM
+  llm.py                  ChatModel (abstração) + OllamaClient
+  connection.py           socket TLS, HELLO/WELCOME e envio seguro
+  history.py · commands.py · streaming.py · tracker.py · console.py · prompts.py
+client/                   npm start
+  main.js                 processo principal (raiz de composição)
+  src/main/               conexão net/tls, delimitação, IPC, janela e argumentos
+  preload.js              ponte segura (contextBridge) entre interface e rede
+  renderer/               interface estilo WhatsApp (módulos ES em renderer/js)
 certs/gen_certs.py        gera a CA de teste e o certificado do servidor
-tests/                    teste de integração + Ollama simulado
+tests/unit/               testes unitários (unittest)
+tests/integration/        teste de integração + Ollama simulado
 docs/                     protocolo, relatório-base, Wireshark e capturas
 ```
 
-## 8. Problemas comuns
+## 8. Fluxo de trabalho
+
+O repositório segue o **Git Flow**: `main` guarda só versões publicadas
+(com tag `vX.Y.Z`), `develop` integra o trabalho e cada mudança nasce em
+`feature/*`, `release/*` ou `hotfix/*`. Veja [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## 9. Problemas comuns
 
 | Sintoma | Solução |
 |---|---|
 | `não foi possível carregar o certificado TLS` | rode `python certs/gen_certs.py` |
+| `No module named server` / `bot` | execute a partir da **raiz** do projeto (`python -m server`) |
 | Cliente: *certificado não é válido para este endereço* | gere de novo com `--san <ip-do-servidor>` e copie o novo `ca.crt` |
 | Bot: *Ollama inacessível* / *modelo não encontrado* | inicie o Ollama e rode `ollama pull qwen3.5:4b` |
 | Respostas do bot lentas | normal em CPU (~8 tokens/s); a resposta aparece em streaming |
@@ -154,5 +195,5 @@ docs/                     protocolo, relatório-base, Wireshark e capturas
 | Porta em uso | `--tls-port`, `--plain-port`, `--dashboard-port` |
 
 > Nenhuma credencial real é usada: o token do bot e os certificados são
-> apenas de teste. As chaves privadas (`certs/*.key`) não devem ser entregues
-> nem versionadas — gere-as em cada máquina.
+> apenas de teste. Chaves e certificados (`certs/*.key`, `certs/*.crt`) não
+> são versionados — gere-os em cada máquina.
